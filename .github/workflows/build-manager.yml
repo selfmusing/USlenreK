@@ -15,28 +15,11 @@ on:
   workflow_call:
 
 jobs:
-  build-lkm:
-    uses: ./.github/workflows/build-lkm.yml
-    secrets: inherit
-
   build-ksud:
-    needs: build-lkm
     strategy:
       matrix:
         include:
           - target: aarch64-linux-android
-            os: ubuntu-latest
-          - target: x86_64-linux-android
-            os: ubuntu-latest
-          - target: x86_64-pc-windows-gnu # windows pc
-            os: ubuntu-latest
-          - target: x86_64-apple-darwin # Intel mac
-            os: macos-latest
-          - target: aarch64-apple-darwin # M chip mac
-            os: macos-latest
-          - target: aarch64-unknown-linux-musl # arm64 Linux
-            os: ubuntu-latest
-          - target: x86_64-unknown-linux-musl # x86 Linux
             os: ubuntu-latest
     uses: ./.github/workflows/ksud.yml
     with:
@@ -96,18 +79,10 @@ jobs:
           name: ksud-aarch64-linux-android
           path: .
 
-      - name: Download x86_64 ksud
-        uses: actions/download-artifact@v4
-        with:
-          name: ksud-x86_64-linux-android
-          path: .
-
       - name: Copy ksud to app jniLibs
         run: |
           mkdir -p app/src/main/jniLibs/arm64-v8a
-          mkdir -p app/src/main/jniLibs/x86_64
           cp -f ../aarch64-linux-android/release/ksud ../manager/app/src/main/jniLibs/arm64-v8a/libksud.so
-          cp -f ../x86_64-linux-android/release/ksud ../manager/app/src/main/jniLibs/x86_64/libksud.so
 
       - name: Build with Gradle
         run: |
