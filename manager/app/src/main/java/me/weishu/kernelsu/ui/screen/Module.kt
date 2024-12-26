@@ -124,6 +124,10 @@ fun ModuleScreen(navigator: DestinationsNavigator) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
+    val webUILauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { viewModel.fetchModuleList() }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -193,7 +197,7 @@ fun ModuleScreen(navigator: DestinationsNavigator) {
                     },
                     onClickModule = { id, name, hasWebUi ->
                         if (hasWebUi) {
-                            context.startActivity(
+                            webUILauncher.launch(
                                 Intent(context, WebUIActivity::class.java)
                                     .setData(Uri.parse("kernelsu://webui/$id"))
                                     .putExtra("id", id)
