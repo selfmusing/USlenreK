@@ -211,6 +211,12 @@ enum Module {
         id: String,
     },
 
+    /// Restore module <id>
+    Restore {
+        /// module id
+        id: String,
+    },
+
     /// enable module <id>
     Enable {
         /// module id
@@ -309,6 +315,7 @@ pub fn run() -> Result<()> {
             match command {
                 Module::Install { zip } => module::install_module(&zip),
                 Module::Uninstall { id } => module::uninstall_module(&id),
+                Module::Restore { id } => module::restore_uninstall_module(&id),
                 Module::Enable { id } => module::enable_module(&id),
                 Module::Disable { id } => module::disable_module(&id),
                 Module::Action { id } => module::run_action(&id),
