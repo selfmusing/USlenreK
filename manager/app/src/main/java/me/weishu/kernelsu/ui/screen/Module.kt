@@ -474,7 +474,7 @@ private fun ModuleList(
                                 scope.launch {
                                     val success = loadingDialog.withLoading {
                                         withContext(Dispatchers.IO) {
-                                            toggleModule(module.dirId, !isChecked)
+                                            toggleModule(module.dirId, !module.enabled)
                                         }
                                     }
                                     if (success) {
