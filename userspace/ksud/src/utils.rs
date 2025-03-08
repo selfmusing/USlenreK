@@ -7,11 +7,9 @@ use std::{
     },
     path::Path,
     process::Command,
-    sync::OnceLock,
 };
 
 use crate::{assets, boot_patch, defs, ksucalls, module, restorecon};
-use std::fs::metadata;
 #[allow(unused_imports)]
 use std::fs::{Permissions, set_permissions};
 #[cfg(unix)]
@@ -188,30 +186,13 @@ fn is_ok_empty(dir: &str) -> bool {
     }
 }
 
-fn find_temp_path() -> String {
-    use std::result::Result::Ok;
-
-    if is_ok_empty(defs::TEMP_DIR) {
-        return defs::TEMP_DIR.to_string();
-    }
-
-    // Try to create a random directory in /dev/
-    let r = tempfile::tempdir_in("/dev/");
-    match r {
-        Ok(tmp_dir) => {
-            if let Some(path) = tmp_dir.into_path().to_str() {
-                return path.to_string();
-            }
-        }
-        Err(_e) => {}
-    }
-
+pub fn get_tmp_path() -> String {
     let dirs = [
-        defs::TEMP_DIR,
+        "/debug_ramdisk",
         "/patch_hw",
         "/oem",
         "/root",
-        defs::TEMP_DIR_LEGACY,
+        "/sbin",
     ];
 
     // find empty directory
@@ -220,25 +201,12 @@ fn find_temp_path() -> String {
             return dir.to_string();
         }
     }
-
-    // Fallback to non-empty directory
-    for dir in dirs {
-        if metadata(dir).is_ok() {
-            return dir.to_string();
-        }
-    }
-
     "".to_string()
 }
 
-pub fn get_tmp_path() -> &'static str {
-    static CHOSEN_TMP_PATH: OnceLock<String> = OnceLock::new();
-
-    CHOSEN_TMP_PATH.get_or_init(|| {
-        let r = find_temp_path();
-        log::info!("Chosen temp_path: {}", r);
-        r
-    })
+pub fn get_work_dir() -> String {
+     let tmp_path = get_tmp_path();
+     format!("{}/workdir/", tmp_path)
 }
 
 #[cfg(target_os = "android")]
