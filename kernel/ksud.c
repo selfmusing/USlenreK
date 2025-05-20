@@ -265,8 +265,17 @@ static int __ksu_handle_execveat_ksud(int *fd, char *filename,
 	return 0;
 }
 
-// keep this for manually hooked builds
-__maybe_unused int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
+#ifdef KSU_USE_STRUCT_FILENAME
+/*
+ * DEPRECATION NOTICE:
+ * This function (ksu_handle_execveat_ksud) is deprecated and retained only for 
+ * compatibility with legacy hooks that uses struct filename.
+ * New builds should use ksu_handle_execve_ksud() and ksu_handle_compat_execve_ksud()
+ *
+ * This wrapper may be removed in future rebases.
+ *
+ */
+int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
 			     struct user_arg_ptr *argv, struct user_arg_ptr *envp,
 			     int *flags)
 {
@@ -284,6 +293,7 @@ __maybe_unused int ksu_handle_execveat_ksud(int *fd, struct filename **filename_
 
 	return __ksu_handle_execveat_ksud(fd, (char *)filename->name, argv, envp, flags);
 }
+#endif // KSU_USE_STRUCT_FILENAME
 
 static ssize_t (*orig_read)(struct file *, char __user *, size_t, loff_t *);
 static ssize_t (*orig_read_iter)(struct kiocb *, struct iov_iter *);
