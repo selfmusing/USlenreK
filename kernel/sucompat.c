@@ -134,6 +134,16 @@ int ksu_handle_execve_sucompat(int *fd, const char __user **filename_user,
 	return ksu_sucompat_common(filename_user, "sys_execve", true);
 }
 
+#ifdef KSU_USE_STRUCT_FILENAME
+/*
+ * DEPRECATION NOTICE:
+ * This function (ksu_handle_execveat_sucompat) is deprecated and retained
+ * only for compatibility with legacy hooks that uses struct filename.
+ * New builds should use ksu_handle_execve_sucompat() directly.
+ *
+ * This function may be removed in future rebases.
+ *
+ */
 // the call from execve_handler_pre won't provided correct value for __never_use_argument, use them after fix execve_handler_pre, keeping them for consistence for manually patched code
 int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,
 				 void *__never_use_argv, void *__never_use_envp,
@@ -161,6 +171,7 @@ int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,
 
 	return 0;
 }
+#endif //KSU_USE_STRUCT_FILENAME
 
 int ksu_handle_devpts(struct inode *inode)
 {
