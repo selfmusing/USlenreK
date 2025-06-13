@@ -164,4 +164,8 @@ static inline void ksu_zeroed_strncpy(char *dest, const char *src, size_t count)
 #define strscpy_pad ksu_zeroed_strncpy
 #endif
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 0, 0)
+#define d_is_reg(dentry) S_ISREG((dentry)->d_inode->i_mode)
+#endif
+
 #endif
