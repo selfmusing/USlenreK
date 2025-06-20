@@ -258,6 +258,8 @@ __maybe_unused int ksu_handle_execveat_ksud(int *fd, struct filename **filename_
 			     struct user_arg_ptr *argv, struct user_arg_ptr *envp,
 			     int *flags)
 {
+	return 0;
+#if 0
 	// return early when disabled
 	if (!ksu_execveat_hook)
 		return 0;
@@ -270,6 +272,7 @@ __maybe_unused int ksu_handle_execveat_ksud(int *fd, struct filename **filename_
 		return 0;
 
 	return ksu_handle_pre_ksud((char *)filename->name);
+#endif
 }
 #endif // KSU_USE_STRUCT_FILENAME
 
@@ -460,6 +463,7 @@ bool ksu_is_safe_mode()
 	return false;
 }
 
+#if 0
 // execve_ksud handlers for non kprobe
 static int ksu_common_execve_ksud(const char __user *filename_user,
 			struct user_arg_ptr *argv)
@@ -481,20 +485,27 @@ static int ksu_common_execve_ksud(const char __user *filename_user,
 
 	return ksu_handle_pre_ksud(path);
 }
+#endif
 
 __maybe_unused int ksu_handle_execve_ksud(const char __user *filename_user,
 			const char __user *const __user *__argv)
 {
+	return 0;
+#if 0
 	struct user_arg_ptr argv = { .ptr.native = __argv };
 	return ksu_common_execve_ksud(filename_user, &argv);
+#endif
 }
 
 #if defined(CONFIG_COMPAT)
 __maybe_unused int ksu_handle_compat_execve_ksud(const char __user *filename_user,
 			const compat_uptr_t __user *__argv)
 {
+	return 0;
+#if 0
 	struct user_arg_ptr argv = { .ptr.compat = __argv };
 	return ksu_common_execve_ksud(filename_user, &argv);
+#endif
 }
 #endif
 
