@@ -609,7 +609,7 @@ int ksu_handle_setuid(struct cred *new, const struct cred *old)
 #define DEVPTS_SUPER_MAGIC	0x1cd1
 #endif
 
-extern int ksu_handle_devpts(struct inode *inode); // sucompat.c
+extern int __ksu_handle_devpts(struct inode *inode); // sucompat.c
 
 int ksu_inode_permission(struct inode *inode, int mask)
 {
@@ -617,7 +617,7 @@ int ksu_inode_permission(struct inode *inode, int mask)
 #ifdef CONFIG_KSU_DEBUG
 		pr_info("%s: handling devpts for: %s \n", __func__, current->comm);
 #endif
-		ksu_handle_devpts(inode);
+		__ksu_handle_devpts(inode);
 	}
 	return 0;
 }
