@@ -57,10 +57,21 @@ ccflags-y += -DEXPECTED_SIZE=$(KSU_EXPECTED_SIZE)
 ccflags-y += -DEXPECTED_HASH=\"$(KSU_EXPECTED_HASH)\"
 
 ifeq ($(shell grep -q "int path_umount" $(srctree)/fs/namespace.c; echo $$?),0)
+
 ccflags-y += -DKSU_UMOUNT
 else
 $(info -- Did you know you can backport path_umount to fs/namespace.c from 5.9?)
 $(info -- Read: https://kernelsu.org/guide/how-to-integrate-for-non-gki.html#how-to-backport-path-umount)
+endif
+
+ifeq ($(shell grep -q "^long copy_from_user_nofault" $(srctree)/include/linux/uaccess.h; echo $$?),0)
+$(info -- KernelSU/compat: copy_from_user_nofault found)
+ccflags-y += -DKSU_COPY_FROM_USER_NOFAULT
+endif
+
+ifeq ($(shell grep -q "^extern long probe_user_read" $(srctree)/include/linux/uaccess.h; echo $$?),0)
+$(info -- KernelSU/compat: probe_user_read found)
+ccflags-y += -DKSU_PROBE_USER_READ
 endif
 
 ccflags-y += -Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-int-conversion -Wno-gcc-compat
