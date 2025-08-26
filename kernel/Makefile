@@ -83,6 +83,16 @@ $(info -- Did you know you can backport path_umount to fs/namespace.c from 5.9?)
 $(info -- Read: https://kernelsu.org/guide/how-to-integrate-for-non-gki.html#how-to-backport-path-umount)
 endif
 
+ifeq ($(shell grep -q "^long copy_from_user_nofault" $(srctree)/include/linux/uaccess.h; echo $$?),0)
+$(info -- KernelSU/compat: copy_from_user_nofault found)
+ccflags-y += -DKSU_COPY_FROM_USER_NOFAULT
+endif
+
+ifeq ($(shell grep -q "^extern long probe_user_read" $(srctree)/include/linux/uaccess.h; echo $$?),0)
+$(info -- KernelSU/compat: probe_user_read found)
+ccflags-y += -DKSU_PROBE_USER_READ
+endif
+
 ccflags-y += -Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-int-conversion -Wno-gcc-compat
 ccflags-y += -Wno-declaration-after-statement -Wno-unused-function
 
