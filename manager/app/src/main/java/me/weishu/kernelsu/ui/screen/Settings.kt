@@ -249,57 +249,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     }
                 }
 
-                val shrink = stringResource(id = R.string.shrink_sparse_image)
-                KsuIsValid {
-                    Card(
-                        modifier = Modifier
-                            .padding(top = 12.dp)
-                            .fillMaxWidth(),
-                    ) {
-                        SuperArrow(
-                            title = shrink,
-                            leftAction = {
-                                Icon(
-                                    Icons.Rounded.Compress,
-                                    modifier = Modifier.padding(end = 16.dp),
-                                    contentDescription = shrink,
-                                    tint = colorScheme.onBackground
-                                )
-                            },
-                            onClick = {
-                                scope.launch {
-                                    val result = shrinkDialog.awaitConfirm(title = shrink)
-                                    if (result == ConfirmResult.Confirmed) {
-                                        loadingDialog.withLoading {
-                                            shrinkModules()
-                                        }
-                                    }
-                                }
-                            },
-                        )
-
-                        val lkmMode = Natives.version >= Natives.MINIMAL_SUPPORTED_KERNEL_LKM && Natives.isLkmMode
-                        if (lkmMode) {
-                            val uninstall = stringResource(id = R.string.settings_uninstall)
-                            SuperArrow(
-                                title = uninstall,
-                                leftAction = {
-                                    Icon(
-                                        Icons.Rounded.Delete,
-                                        modifier = Modifier.padding(end = 16.dp),
-                                        contentDescription = uninstall,
-                                        tint = colorScheme.onBackground,
-                                    )
-                                },
-                                onClick = {
-                                    showUninstallDialog.value = true
-                                    uninstallDialog
-                                }
-                            )
-                        }
-                    }
-                }
-
                 Card(
                     modifier = Modifier
                         .padding(vertical = 12.dp)
