@@ -62,7 +62,7 @@ fun download(
 
 fun checkNewVersion(): LatestVersionInfo {
     if (!isNetworkAvailable(ksuApp)) return LatestVersionInfo()
-    val url = "https://api.github.com/repos/backslashxx/KernelSU/releases/latest"
+    val url = "https://api.github.com/repos/selfmusing/USlenrek/releases/latest"
     // default null value if failed
     val defaultValue = LatestVersionInfo()
     runCatching {

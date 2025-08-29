@@ -146,6 +146,7 @@ fun HomePagerMiuix(
                     if (state.checkUpdateEnabled) {
                         UpdateCard(state = state, actions = actions)
                     }
+                    Unofficial(onOpenUrl = actions.onOpenUrl)
                     InfoCard(systemInfo = state.systemInfo)
                     DonateCard(onOpenUrl = actions.onOpenUrl)
                     LearnMoreCard(onOpenUrl = actions.onOpenUrl)
@@ -153,6 +154,31 @@ fun HomePagerMiuix(
                 Spacer(Modifier.height(bottomInnerPadding))
             }
         }
+    }
+}
+
+@Composable
+private fun Unofficial(
+    onOpenUrl: (String) -> Unit,
+) {
+    val url = stringResource(R.string.home_unofficial_kernelsu_announce)
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        BasicComponent(
+            title = stringResource(R.string.home_unofficial_kernelsu),
+            summary = stringResource(R.string.home_unofficial_kernelsu_body),
+            endActions = {
+                Icon(
+                    imageVector = MiuixIcons.Link,
+                    tint = colorScheme.onSurface,
+                    contentDescription = null
+                )
+            },
+            onClick = { onOpenUrl(url) },
+            insideMargin = PaddingValues(18.dp)
+        )
     }
 }
 
