@@ -6,6 +6,14 @@
 #include "linux/version.h"
 #include "linux/key.h"
 
+#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
+// arch/arm64/include/asm/barrier.h, adding dsb probably unneeded
+#define DONT_GET_SMART() do { barrier(); isb(); } while (0)
+#else
+// well, compiler atleast, and not our targets
+#define DONT_GET_SMART() barrier()
+#endif
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0) || defined(CONFIG_KSU_ALLOWLIST_WORKAROUND)
 extern struct key *init_session_keyring;
 #endif

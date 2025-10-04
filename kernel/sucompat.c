@@ -54,7 +54,7 @@ static char __user *ksud_user_path(void)
 __attribute__((hot, no_stack_protector))
 static __always_inline bool is_su_allowed(const void *ptr_to_check)
 {
-	barrier();
+	DONT_GET_SMART();
 	if (!ksu_sucompat_non_kp)
 		return false;
 
@@ -160,7 +160,7 @@ int ksu_handle_devpts(struct inode *inode)
 
 int __ksu_handle_devpts(struct inode *inode)
 {
-	barrier();
+	DONT_GET_SMART();
 	if (!ksu_sucompat_non_kp)
 		return 0;
 

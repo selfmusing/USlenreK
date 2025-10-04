@@ -261,7 +261,7 @@ LSM_HANDLER_TYPE ksu_handle_prctl(int option, unsigned long arg2, unsigned long 
 skip_check:
 	// yes this causes delay, but this keeps the delay consistent, which is what we want
 	// with a barrier for safety as the compiler might try to do something smart.
-	barrier();
+	DONT_GET_SMART();
 	if (!is_allow_su())
 		return 0;
 
