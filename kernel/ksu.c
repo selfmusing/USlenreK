@@ -51,6 +51,10 @@
 #include "selinux/sepolicy.c"
 #include "selinux/rules.c"
 
+#ifdef CONFIG_KSU_EXTRAS
+#include "extras.c"
+#endif
+
 struct cred* ksu_cred;
 
 extern void ksu_supercalls_init();
@@ -83,6 +87,10 @@ int __init kernelsu_init(void)
 	ksu_allowlist_init();
 
 	ksu_throne_tracker_init();
+
+#ifdef CONFIG_KSU_EXTRAS
+	ksu_avc_spoof_init(); // so the feature is registered
+#endif
 
 	return 0;
 }
