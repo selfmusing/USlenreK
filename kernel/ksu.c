@@ -48,6 +48,10 @@ int __init kernelsu_init(void)
 
 	ksu_throne_tracker_init();
 
+#ifdef CONFIG_KSU_EXTRAS
+	ksu_avc_spoof_init(); // so the feature is registered
+#endif
+
 	return 0;
 }
 
