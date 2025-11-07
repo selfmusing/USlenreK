@@ -59,14 +59,14 @@ static long ksu_copy_from_user_retry(void *to, const void __user *from, unsigned
 	return copy_from_user(to, from, count);
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0) && !defined(KSU_HAS_SELINUX_INODE)
 static inline struct inode_security_struct *selinux_inode(const struct inode *inode)
 {
 	return inode->i_security;
 }
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0) && !defined(KSU_HAS_SELINUX_CRED)
 static inline struct task_security_struct *selinux_cred(const struct cred *cred)
 {
 	return cred->security;
