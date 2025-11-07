@@ -68,14 +68,14 @@ __weak int anon_inode_getfd_secure(const char *name, const struct file_operation
 }
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0) && !defined(KSU_HAS_SELINUX_INODE)
 static inline struct inode_security_struct *selinux_inode(const struct inode *inode)
 {
 	return inode->i_security;
 }
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0) && !defined(KSU_HAS_SELINUX_CRED)
 static inline struct task_security_struct *selinux_cred(const struct cred *cred)
 {
 	return cred->security;
