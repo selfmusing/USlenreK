@@ -174,7 +174,8 @@ int escape_with_root_profile(void)
 
 	commit_creds(cred);
 
-	disable_seccomp();
+	if (!!current->seccomp.mode)
+		disable_seccomp();
 	
 	setup_mount_ns(profile->namespaces);
 	ksu_put_root_profile(profile);
