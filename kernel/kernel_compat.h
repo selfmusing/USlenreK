@@ -7,6 +7,7 @@
 #include <linux/version.h>
 #include <linux/key.h>
 #include <linux/syscalls.h>
+#include <linux/cred.h>
 
 extern struct file *ksu_filp_open_compat(const char *filename, int flags,
 					 umode_t mode);
@@ -57,5 +58,19 @@ static long ksu_copy_from_user_retry(void *to, const void __user *from, unsigned
 	// we faulted! fallback to slow path
 	return copy_from_user(to, from, count);
 }
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
+static inline struct inode_security_struct *selinux_inode(const struct inode *inode)
+{
+	return inode->i_security;
+}
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
+static inline struct task_security_struct *selinux_cred(const struct cred *cred)
+{
+	return cred->security;
+}
+#endif
 
 #endif
