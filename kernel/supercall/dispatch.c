@@ -683,9 +683,10 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
 long ksu_supercall_handle_ioctl(unsigned int cmd, void __user *argp)
 {
 	int i;
+	kuid_t current_uid = current_uid();
 
 #ifdef CONFIG_KSU_DEBUG
-	pr_info("ksu ioctl: cmd=0x%x from uid=%d\n", cmd, current_uid().val);
+	pr_info("ksu ioctl: cmd=0x%x from uid=%d\n", cmd, ksu_get_uid_t(current_uid));
 #endif
 
 	for (i = 0; ksu_ioctl_handlers[i].handler; i++) {
@@ -694,7 +695,7 @@ long ksu_supercall_handle_ioctl(unsigned int cmd, void __user *argp)
 			if (ksu_ioctl_handlers[i].perm_check &&
 			    !ksu_ioctl_handlers[i].perm_check()) {
 				pr_warn("ksu ioctl: permission denied for cmd=0x%x uid=%d\n",
-					cmd, current_uid().val);
+					cmd, ksu_get_uid_t(current_uid));
 				return -EPERM;
 			}
 			// Execute handler
