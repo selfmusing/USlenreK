@@ -1,19 +1,20 @@
 static int do_grant_root(void __user *arg)
 {
 	int ret;
-	__u32 audit_uid = current_uid().val;
-	__u32 audit_euid = current_euid().val;
+	kuid_t audit_uid = current_uid();
+	kuid_t audit_euid = current_euid();
 
 	// we already check uid above on allowed_for_su()
 
 	write_sulog('i'); // log ioctl escalation
 
-	pr_info("allow root for: %d\n", audit_uid);
+	pr_info("allow root for: %d\n", ksu_get_uid_t(audit_uid));
 	ret = escape_with_root_profile();
 
 #ifdef CONFIG_KSU_FEATURE_SULOG
-	ksu_sulog_emit_grant_root(ret, audit_uid, audit_euid, GFP_KERNEL);
+	ksu_sulog_emit_grant_root(ret, ksu_get_uid_t(audit_uid), ksu_get_uid_t(audit_euid), GFP_KERNEL);
 #endif
+
 	return ret;
 }
 
@@ -690,9 +691,10 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
 long ksu_supercall_handle_ioctl(unsigned int cmd, void __user *argp)
 {
 	int i;
+	kuid_t current_uid = current_uid();
 
 #ifdef CONFIG_KSU_DEBUG
-	pr_info("ksu ioctl: cmd=0x%x from uid=%d\n", cmd, current_uid().val);
+	pr_info("ksu ioctl: cmd=0x%x from uid=%d\n", cmd, ksu_get_uid_t(current_uid));
 #endif
 
 	for (i = 0; ksu_ioctl_handlers[i].handler; i++) {
@@ -701,7 +703,7 @@ long ksu_supercall_handle_ioctl(unsigned int cmd, void __user *argp)
 			if (ksu_ioctl_handlers[i].perm_check &&
 			    !ksu_ioctl_handlers[i].perm_check()) {
 				pr_warn("ksu ioctl: permission denied for cmd=0x%x uid=%d\n",
-					cmd, current_uid().val);
+					cmd, ksu_get_uid_t(current_uid));
 				return -EPERM;
 			}
 			// Execute handler
