@@ -10,11 +10,6 @@
 #include <linux/uaccess.h>
 #include <linux/version.h>
 
-#include "klog.h" // IWYU pragma: keep
-#include "selinux/selinux.h"
-
-#include "file_wrapper.h"
-
 static loff_t ksu_wrapper_llseek(struct file *fp, loff_t off, int flags) {
 	struct ksu_file_wrapper* data = fp->private_data;
 	struct file* orig = data->orig;

@@ -13,13 +13,6 @@
 #include <linux/uidgid.h>
 #include <linux/version.h>
 
-#include "allowlist.h"
-#include "app_profile.h"
-#include "klog.h" // IWYU pragma: keep
-#include "selinux/selinux.h"
-#include "sucompat.h"
-#include "kernel_compat.h"
-
 static struct group_info root_groups = { .usage = ATOMIC_INIT(2) };
 
 static void setup_groups(struct root_profile *profile, struct cred *cred)
