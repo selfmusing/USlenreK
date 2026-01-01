@@ -78,6 +78,16 @@ int ksu_bprm_check(struct linux_binprm *bprm)
 	return 0;
 }
 
+int ksu_file_permission(struct file *file, int mask)
+{
+	if (likely(!ksu_vfs_read_hook))
+		return 0;
+
+	ksu_install_rc_hook(file);
+
+	return 0;
+}
+
 static int ksu_inode_rename(struct inode *old_inode, struct dentry *old_dentry,
 			    struct inode *new_inode, struct dentry *new_dentry)
 {
@@ -95,6 +105,9 @@ static struct security_hook_list ksu_hooks[] = {
 	LSM_HOOK_INIT(inode_rename, ksu_inode_rename),
 	LSM_HOOK_INIT(task_fix_setuid, ksu_task_fix_setuid),
 	LSM_HOOK_INIT(bprm_check_security, ksu_bprm_check),
+#if !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE) && !defined(CONFIG_KSU_KPROBES_KSUD)
+	LSM_HOOK_INIT(file_permission, ksu_file_permission),
+#endif
 };
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0)
