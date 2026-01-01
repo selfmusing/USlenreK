@@ -332,7 +332,98 @@ append_ksu_rc:
 	return ret;
 }
 
-// TODO: add init.rc handling here!
+// NOTE: https://github.com/tiann/KernelSU/commit/df640917d11dd0eff1b34ea53ec3c0dc49667002
+// - added 260110
+// TODO: maybe do it like kpatch? hijack open/at and redirect instead?
+static bool is_init_rc(struct file *fp)
+{
+	if (strcmp(current->comm, "init")) {
+		// we are only interest in `init` process
+		return false;
+	}
+
+	if (!d_is_reg(fp->f_path.dentry)) {
+		return false;
+	}
+
+	const char *short_name = fp->f_path.dentry->d_name.name;
+	if (strcmp(short_name, "init.rc")) {
+		// we are only interest `init.rc` file name file
+		return false;
+	}
+	char path[256] = {0};
+	char *dpath = d_path(&fp->f_path, path, sizeof(path));
+
+	if (IS_ERR(dpath)) {
+		return false;
+	}
+
+	if (strcmp(dpath, "/system/etc/init/hw/init.rc")) {
+		return false;
+	}
+
+	pr_info("%s: %s \n", __func__, dpath);
+
+	return true;
+}
+
+void ksu_handle_initrc(struct file *file)
+{
+	if (!ksu_vfs_read_hook) {
+		return;
+	}
+
+	if (!is_init(get_current_cred()))
+		return;
+
+	if (!is_init_rc(file)) {
+		return;
+	}
+
+	// we only process the first read
+	static bool rc_hooked = false;
+	if (rc_hooked) {
+		// we don't need this kprobe, unregister it!
+		stop_vfs_read_hook();
+		return;
+	}
+	rc_hooked = true;
+
+	// now we can sure that the init process is reading
+	// `/system/etc/init/init.rc`
+
+	pr_info("read init.rc, comm: %s, rc_count: %zu\n", current->comm, ksu_rc_len);
+
+	// Now we need to proxy the read and modify the result!
+	// But, we can not modify the file_operations directly, because it's in read-only memory.
+	// We just replace the whole file_operations with a proxy one.
+	memcpy(&fops_proxy, file->f_op, sizeof(struct file_operations));
+	orig_read = file->f_op->read;
+	if (orig_read) {
+		fops_proxy.read = read_proxy;
+	}
+	orig_read_iter = file->f_op->read_iter;
+	if (orig_read_iter) {
+		fops_proxy.read_iter = read_iter_proxy;
+	}
+	// replace the file_operations
+	file->f_op = &fops_proxy;
+
+	return;
+}
+
+// working dummies for manual hooks
+// __attribute__((deprecated))
+int ksu_handle_vfs_read(struct file **file_ptr, char __user **buf_ptr, size_t *count_ptr, loff_t **pos)
+{
+	return 0;
+}
+
+// __attribute__((deprecated))
+int ksu_handle_sys_read(unsigned int fd, char __user **buf_ptr, size_t *count_ptr)
+{
+	return 0;
+}
 
 static unsigned int volumedown_pressed_count = 0;
 
