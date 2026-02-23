@@ -10,7 +10,7 @@ config KSU
 config KSU_EXTRAS
 	bool "Enable custom stuff"
 	depends on KSU
-	default n
+	default y
 	help
 	  Custom extensions. Experimental.
 	  Currently, only avc log spoofing is implemented.
@@ -18,7 +18,7 @@ config KSU_EXTRAS
 config KSU_KPROBES_KSUD
 	bool "Enable dynamic kprobes for early boot hooks"
 	depends on KPROBES && KRETPROBES
-	default y
+	default n
 	help
 	  Use dynamic hooks via kprobes for functions only
 	  on early boot. Hooks are unregistered at boot complete
@@ -27,7 +27,7 @@ config KSU_KPROBES_KSUD
 config KSU_TAMPER_SYSCALL_TABLE
 	bool "EXPERIMENTAL: tamper sys_call_table for sucompat + sys_reboot"
 	depends on (ARM || ARM64) && !KSU_KRETPROBES_SUCOMPAT
-	default n
+	default y
 	help
 	  EXPERIMENTAL: use syscall table hijacking method demonstrated on zx2c4's
 	  kernel-assisted-superuser. Replaces sys_reboot, sys_execve, sys_newfstatat,
@@ -52,7 +52,7 @@ config KSU_DEBUG
 
 config KSU_THRONE_TRACKER_ALWAYS_THREADED
 	bool "Always run throne tracker in a kthread"
-	default n
+	default y
 	help
 	  Enable this option to run throne tracker in a kthread for the first
 	  run, which happens at boot time / decryption stage. This can decrease

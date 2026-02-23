@@ -187,7 +187,7 @@ fun HomePager(
         }
     }
 }
-
+@Composable
 fun Unofficial() {
     val uriHandler = LocalUriHandler.current
     val url = stringResource(R.string.home_unofficial_kernelsu_announce)
