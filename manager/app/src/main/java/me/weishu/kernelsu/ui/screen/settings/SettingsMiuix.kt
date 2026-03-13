@@ -293,6 +293,7 @@ fun SettingPagerMiuix(
                             onCheckedChange = actions.onSetEnableWebDebugging
                         )
                         SuperSwitch(
+                            enabled = false,
                             title = stringResource(id = R.string.settings_auto_jailbreak),
                             summary = stringResource(id = R.string.settings_auto_jailbreak_summary),
                             startAction = {
