@@ -12,7 +12,7 @@ $(info -- KDIR: $(KDIR))
 $(info -- MDIR: $(MDIR))
 
 # compliant to last upstream kernel change as of 46ad8dc
-CFLAGS_ksu.o += -DKSU_VERSION=32514
+CFLAGS_ksu.o += -DKSU_VERSION=32519
 
 ifndef KSU_EXPECTED_SIZE
 KSU_EXPECTED_SIZE := 0x033b

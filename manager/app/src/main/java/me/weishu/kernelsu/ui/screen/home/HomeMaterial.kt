@@ -1,5 +1,6 @@
 package me.weishu.kernelsu.ui.screen.home
 
+import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -82,18 +83,6 @@ fun HomePagerMaterial(
                 WarningCard(stringResource(id = R.string.home_pr_build_warning))
             } else if (state.showKernelPrBuildWarning) {
                 WarningCard(stringResource(id = R.string.home_pr_kernel_warning))
-            }
-            if (state.showVersionMismatchWarning) {
-                WarningCard(
-                    stringResource(
-                        id = R.string.home_version_mismatch,
-                        state.currentManagerVersionCode,
-                        state.ksuVersion ?: 0
-                    )
-                )
-            }
-            if (state.showGkiWarning) {
-                WarningCard(stringResource(id = R.string.home_gki_warning))
             }
             if (state.showUAPIMisMatchWarning) {
                 WarningCard(
@@ -213,7 +202,7 @@ private fun StatusCard(
                 when {
                     state.ksuVersion != null -> {
                         val workingMode = when (state.lkmMode) {
-                            null -> ""
+                            null -> if (Build.SUPPORTED_64_BIT_ABIS.isEmpty()) "<U-LEGACY>" else "<LEGACY>"
                             true -> "LKM"
                             else -> "GKI"
                         }
@@ -461,15 +450,6 @@ private fun InfoCard(systemInfo: SystemInfo) {
                 else -> stringResource(R.string.selinux_status_unknown)
             }
             InfoCardItem(stringResource(R.string.home_selinux_status), selinuxDisplay)
-            Spacer(Modifier.height(16.dp))
-            val seccompDisplay = when (systemInfo.seccompStatus) {
-                -1 -> stringResource(R.string.seccomp_status_not_supported)
-                0 -> stringResource(R.string.seccomp_status_disabled)
-                1 -> stringResource(R.string.seccomp_status_strict)
-                2 -> stringResource(R.string.seccomp_status_filter)
-                else -> stringResource(R.string.seccomp_status_unknown)
-            }
-            InfoCardItem(stringResource(R.string.home_seccomp_status), seccompDisplay)
         }
     }
 }
