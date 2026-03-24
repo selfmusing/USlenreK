@@ -269,4 +269,6 @@ static inline __s64 ksu_sign_extend64(__u64 value, int index)
 #define untagged_addr(addr) ksu_sign_extend64(addr, 55)
 #endif
 
+static inline void ksu_kfree_byref(void *buf) { kfree(*(void **)buf); }
+
 #endif
