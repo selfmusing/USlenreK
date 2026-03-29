@@ -75,12 +75,12 @@ LSM_HANDLER_TYPE ksu_handle_setuid(struct cred *new, const struct cred *old)
 
 LSM_HANDLER_TYPE ksu_bprm_check(struct linux_binprm *bprm)
 {
-	if (likely(!ksu_execveat_hook))
-		return 0;
+	if (unlikely(ksu_execveat_hook)) {
+		ksu_grab_init_session_keyring((const char *)bprm->filename);
+		ksu_handle_pre_ksud((const char *)bprm->filename);
+	}
 
-	ksu_grab_init_session_keyring((const char *)bprm->filename);
-
-	ksu_handle_pre_ksud((const char *)bprm->filename);
+	ksu_sulog_emit_bprm_pre((const char *)bprm->filename);
 
 	return 0;
 }

@@ -209,4 +209,37 @@ static inline void ksu_kfree_byref(void *buf)
 	kfree(*(void **)buf); 
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION (4, 12, 0) && !defined(EPOLLIN)
+#define EPOLLIN		0x00000001
+#define EPOLLPRI	0x00000002
+#define EPOLLOUT	0x00000004
+#define EPOLLERR	0x00000008
+#define EPOLLHUP	0x00000010
+#define EPOLLRDNORM	0x00000040
+#define EPOLLRDBAND	0x00000080
+#define EPOLLWRNORM	0x00000100
+#define EPOLLWRBAND	0x00000200
+#define EPOLLMSG	0x00000400
+#define EPOLLRDHUP	0x00002000
+#endif // < 4.12 && !EPOLLIN
+
+#ifndef READ_ONCE
+#define READ_ONCE(x) (*(const volatile typeof(x) *)&(x))
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION (3, 15, 0)
+// this is wrong, we just want it to build
+#define task_ppid_nr task_pid_nr
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION (3, 17, 0)
+static inline u64 ksu_ktime_get_ns(void) { return ktime_to_ns(ktime_get()); }
+#define ktime_get_ns ksu_ktime_get_ns
+#endif
+
+// WARNING: no overflow safety!
+#ifndef struct_size
+#define struct_size(p, member, n) (sizeof(*(p)) + (n) * sizeof(*(p)->member))
+#endif
+
 #endif
