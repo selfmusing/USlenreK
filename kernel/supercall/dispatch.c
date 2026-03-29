@@ -519,6 +519,23 @@ out:
 	return err;
 }
 
+static int do_get_sulog_fd(void __user *arg)
+{
+	struct ksu_get_sulog_fd_cmd cmd;
+
+	if (copy_from_user(&cmd, arg, sizeof(cmd))) {
+		pr_err("get_sulog_fd: copy_from_user failed\n");
+		return -EFAULT;
+	}
+
+	if (cmd.flags) {
+		pr_err("get_sulog_fd: unsupported flags 0x%x\n", cmd.flags);
+		return -EINVAL;
+	}
+
+	return ksu_install_sulog_fd();
+}
+
 // IOCTL handlers mapping table
 static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
 	{ .cmd = KSU_IOCTL_GRANT_ROOT, .name = "GRANT_ROOT", .handler = do_grant_root, .perm_check = allowed_for_su },
@@ -542,6 +559,7 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
 	{ .cmd = KSU_IOCTL_NUKE_EXT4_SYSFS, .name = "NUKE_EXT4_SYSFS", .handler = do_nuke_ext4_sysfs, .perm_check = manager_or_root },
 	{ .cmd = KSU_IOCTL_ADD_TRY_UMOUNT, .name = "ADD_TRY_UMOUNT", .handler = add_try_umount, .perm_check = manager_or_root },
 	{ .cmd = KSU_IOCTL_SET_INIT_PGRP, .name = "SET_INIT_PGRP", .handler = do_set_init_pgrp, .perm_check = only_root },
+	{ .cmd = KSU_IOCTL_GET_SULOG_FD, .name = "GET_SULOG_FD", .handler = do_get_sulog_fd, .perm_check = only_root },
 	{ .cmd = 0, .name = NULL, .handler = NULL, .perm_check = NULL } // Sentinel
 };
 

@@ -26,6 +26,8 @@ int __init kernelsu_init(void)
 	ksu_sucompat_init(); // so the feature is registered
 
 	ksu_kernel_umount_init(); // so the feature is registered
+	
+	ksu_sulog_init(); // so the feature is registered
 
 	ksu_core_init();
 
