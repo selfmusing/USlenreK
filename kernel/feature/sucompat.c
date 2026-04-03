@@ -169,6 +169,10 @@ static int ksu_handle_execve_sucompat(int *fd, const char __user **filename_user
 	if (unlikely(!ksu_boot_completed))
 		sys_execve_escape_ksud(filename_user);
 
+#ifdef CONFIG_KSU_FEATURE_ADBROOT
+	ksu_adb_root_handle_execve(filename_user, (void ***)envp);
+#endif
+
 	if (!is_su_allowed((const void **)filename_user))
 		return 0;
 
@@ -216,6 +220,9 @@ int ksu_handle_execveat(int *fd, struct filename **filename_ptr, void *argv, voi
 	if (unlikely(!ksu_boot_completed))
 		kernel_execve_escape_ksud((void *)(*filename_ptr)->name);
 
+#ifdef CONFIG_KSU_FEATURE_ADBROOT
+	ksu_adb_root_handle_execveat((void *)(*filename_ptr)->name, envp);
+#endif
 	if (!is_su_allowed((const void **)filename_ptr))
 		return 0;
 
@@ -234,6 +241,9 @@ int ksu_legacy_execve_sucompat(const char **filename_ptr, void *argv, void *envp
 	if (unlikely(!ksu_boot_completed))
 		kernel_execve_escape_ksud((void *)*filename_ptr);
 
+#ifdef CONFIG_KSU_FEATURE_ADBROOT
+	ksu_adb_root_handle_execveat((void *)*filename_ptr, envp);
+#endif
 	if (!is_su_allowed((const void **)filename_ptr))
 		return 0;
 
