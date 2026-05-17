@@ -135,8 +135,7 @@ static bool ksu_should_destroy_context(char *str)
 }
 #endif
 
-// NOTE: this is also available as manual hook for 6.8+
-int ksu_hide_setprocattr(const char *name, void *value, size_t size)
+static __always_inline int ksu_hide_setprocattr_inline(const char *name, void *value, size_t size)
 {
 	if (unlikely(!ksu_selinux_hide_enabled))
 		return 0;
